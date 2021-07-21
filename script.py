@@ -4,6 +4,7 @@ import pandas as pd
 import datetime as dt
 
 def regresion(x,y,rango_regresion,valor=None):
+    x= crearFechas(x)
     xMenosPromedio = obtenerLista(x)
     yMenosPromedio = obtenerLista(y)
     xMenosXCuadrado = obtenerCuadrado(x)
@@ -15,6 +16,7 @@ def regresion(x,y,rango_regresion,valor=None):
     w1 = sumaResultadoMultiplicacion / sumaCuadradosX 
     w0 = -1*w1*promedio_x + promedio_y
     if valor:
+        valor = convertirFecha(valor)
         print(obtenerValorRegresion(valor,w0,w1))
     else:
         obtenerLineaRegresion(x,y,rango_regresion,w0,w1)
@@ -54,18 +56,24 @@ def obtenerCuadrado(lista):
         iMenosICuadrado.append(resultado)
     return iMenosICuadrado
 
-if __name__ == "__main__":
-    df = pd.read_excel('data.xlsx')
-    y_column =  df['y']
-    df['x'] = pd.to_datetime(df['x'],format="%D-%M-%Y")
-    df['x']=df['x'].map(dt.datetime.toordinal)
-    x_column = df['x']
-    print(x_column)
+def crearFechas(lista_fechas):
+    lista_fechas = pd.to_datetime(lista_fechas,format="%D-%M-%Y")
+    lista_fechas=lista_fechas.map(dt.datetime.toordinal)
+    return lista_fechas
 
-    entrada = "2021/07/08" #"%Y%m%d
-    x = pd.DataFrame({"Date": [entrada]})  
+def convertirFecha(fecha):
+    x = pd.DataFrame({"Date": [fecha]})  
     x['Date'] = pd.to_datetime(x['Date'])
     x['Date']=x['Date'].map(dt.datetime.toordinal)
     fecha = x['Date'][0]
-    # regresion(x_column,y_column,1000,737977)
-    regresion(x_column,y_column,1000,fecha)
+    return fecha
+
+if __name__ == "__main__":
+    df = pd.read_excel('data.xlsx')
+    y_column =  df['y']
+    x_column = df['x']
+    regresion(x_column,y_column,'',"2021/07/05")
+    regresion(x_column,y_column,10000000)
+
+
+
